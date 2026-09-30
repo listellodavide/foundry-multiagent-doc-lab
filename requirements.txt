@@ -1,0 +1,16 @@
+# Microsoft Foundry Multi-Agent 2-Day Workshop - vendor onboarding lab
+# Versions match the Microsoft Learn mslearn-ai-agents solutions (checked September 2026).
+# Python 3.12 or 3.13 (PyRIT, used by azure-ai-evaluation, does not support 3.14 yet).
+agent-framework==1.12.1
+azure-ai-projects==2.3.0
+azure-identity>=1.25.3
+# openai 3.x replaced httpx with httpx2, which breaks azure-ai-projects: pinned like the Learn labs.
+openai<3
+azure-ai-evaluation==1.18.3
+azure-monitor-opentelemetry
+opentelemetry-sdk
+fastmcp
+mcp
+pymupdf
+pydantic>=2,<3
+python-dotenv

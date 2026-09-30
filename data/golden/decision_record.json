@@ -1,0 +1,34 @@
+{
+  "vendor": {
+    "legal_name": "Carpathia Localization SRL",
+    "registration_number": "J40/12345/2019",
+    "country": "Romania",
+    "signatory": "Ioana Marinescu",
+    "iban_last4": "9012"
+  },
+  "facts": {
+    "breach_notification_hours": 96,
+    "pen_test_date": "2025-06-20",
+    "soc2_report_date": "2026-05-31",
+    "insurance_cover_eur": 2000000,
+    "insurance_expiry": "2026-12-01",
+    "payment_terms_days": 45,
+    "liability_cap_months": 12,
+    "msa_signatory": "Ioana Marinescu",
+    "invoice_subtotal": 4000.0,
+    "invoice_vat": 760.0,
+    "invoice_total": 4800.0
+  },
+  "findings": [
+    {"rule_id": "R1", "status": "fail", "severity": "high", "evidence": "within ninety-six (96) hours after becoming aware of a personal data breach", "source": "02_dpa.pdf p1"},
+    {"rule_id": "R2", "status": "fail", "severity": "medium", "evidence": "last external penetration test was completed on 20 June 2025", "source": "03_security_questionnaire.pdf p1"},
+    {"rule_id": "R3", "status": "pass", "severity": "medium", "evidence": "SOC 2 Type II report covers 1 June 2025 to 31 May 2026", "source": "03_security_questionnaire.pdf p1"},
+    {"rule_id": "R4", "status": "fail", "severity": "medium", "evidence": "Cyber liability EUR 2,000,000; policy period to 1 December 2026 (29 days after onboarding)", "source": "04_insurance_certificate.pdf p1"},
+    {"rule_id": "R5", "status": "pass", "severity": "low", "evidence": "pay within forty-five (45) days of receipt", "source": "01_msa.pdf p1"},
+    {"rule_id": "R6", "status": "pass", "severity": "high", "evidence": "liability shall not exceed the total Fees paid or payable in the twelve (12) months", "source": "01_msa.pdf p2"},
+    {"rule_id": "R7", "status": "fail", "severity": "low", "evidence": "EUR 4,000.00 + EUR 760.00 = EUR 4,760.00, invoice states EUR 4,800.00", "source": "05_invoice.pdf p1"},
+    {"rule_id": "R8", "status": "pass", "severity": "high", "evidence": "MSA signed by Ioana Marinescu, authorised signatory in the company profile", "source": "06_company_profile_scan.pdf p1"}
+  ],
+  "decision": "conditional",
+  "rationale": "One high-severity rule fails (R1, breach notice 96 hours instead of 72). Pen test (R2), insurance validity (R4) and invoice total (R7) also need fixing before the first purchase order."
+}
