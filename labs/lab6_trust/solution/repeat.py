@@ -29,6 +29,8 @@ LABS = {
 
 def load_module(path: Path):
     spec = importlib.util.spec_from_file_location(path.stem, path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load lab module: {path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
@@ -44,6 +46,10 @@ async def one_run(lab: str) -> DecisionRecord:
 
 
 async def main(lab: str, runs: int) -> None:
+    if lab not in LABS:
+        raise ValueError(f"Unknown lab {lab!r}; choose one of {', '.join(LABS)}")
+    if runs < 1:
+        raise ValueError("runs must be at least 1")
     golden = DecisionRecord.model_validate_json(GOLDEN.read_text())
     totals, verdicts = [], []
     # >>> TODO 1: run the technique N times, score each run, and collect the rule verdicts

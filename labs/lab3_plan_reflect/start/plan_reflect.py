@@ -17,14 +17,14 @@ from typing import Literal
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from agent_framework import Agent  # noqa: E402
-from pydantic import BaseModel, Field  # noqa: E402
+from agent_framework import Agent
+from pydantic import BaseModel, Field
 
-from shared import pdf  # noqa: E402
-from shared.clients import chat_client, response_value, save_run, timed  # noqa: E402
-from shared.policy import RULES, build_record, policy_text  # noqa: E402
-from shared.schema import KeyFacts  # noqa: E402
-from shared.vision import extract_profile_from_scan  # noqa: E402
+from shared import pdf
+from shared.clients import chat_client, response_value, save_run, timed
+from shared.policy import RULES, build_record, policy_text
+from shared.schema import KeyFacts
+from shared.vision import extract_profile_from_scan
 
 MAX_ROUNDS = 2
 

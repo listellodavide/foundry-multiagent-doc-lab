@@ -39,7 +39,7 @@ def response_value(response, model):
         value = response.value
         if isinstance(value, model):
             return value
-    except Exception:  # noqa: BLE001 - fall back to parsing the text
+    except Exception:
         pass
     return parse_model(response.text, model)
 

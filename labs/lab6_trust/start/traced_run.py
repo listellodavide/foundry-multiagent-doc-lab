@@ -28,6 +28,8 @@ async def main() -> None:
     raise NotImplementedError("TODO 1: see the lab README")
 
     spec = importlib.util.spec_from_file_location("workflow", ROOT / "labs/lab4_workflow/solution/workflow.py")
+    if spec is None or spec.loader is None:
+        raise ImportError("Cannot load Lab 4 workflow module")
     workflow_module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = workflow_module
     spec.loader.exec_module(workflow_module)

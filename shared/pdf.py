@@ -1,6 +1,7 @@
 """PDF helpers built on PyMuPDF. Every file access goes through safe_path()."""
 
 from pathlib import Path
+from typing import cast
 
 import pymupdf as fitz  # PyMuPDF
 
@@ -22,7 +23,7 @@ def list_documents() -> list[dict]:
     docs = []
     for pdf in sorted(PACKET_DIR.glob("*.pdf")):
         with fitz.open(pdf) as doc:
-            text_chars = sum(len(p.get_text().strip()) for p in doc)
+            text_chars = sum(len(cast(str, doc[i].get_text("text")).strip()) for i in range(doc.page_count))
             docs.append({"file": pdf.name, "pages": doc.page_count, "has_text_layer": text_chars > 20})
     return docs
 
@@ -31,7 +32,7 @@ def page_text(file: str, page: int) -> str:
     with fitz.open(safe_path(file)) as doc:
         if not 1 <= page <= doc.page_count:
             raise ValueError(f"{file} has {doc.page_count} page(s)")
-        text = doc[page - 1].get_text().strip()
+        text = cast(str, doc[page - 1].get_text("text")).strip()
     return text or "[no text layer on this page: it is a scanned image, use a vision or OCR tool]"
 
 
@@ -52,6 +53,8 @@ def document_text(file: str, max_chars: int = 12000) -> str:
 
 def render_page_png(file: str, page: int = 1, dpi: int = 150) -> bytes:
     with fitz.open(safe_path(file)) as doc:
+        if not 1 <= page <= doc.page_count:
+            raise ValueError(f"{file} has {doc.page_count} page(s)")
         return doc[page - 1].get_pixmap(dpi=dpi).tobytes("png")
 
 
@@ -74,8 +77,8 @@ def search_text(query: str, max_hits: int = 8) -> list[dict]:
     hits = []
     for doc in list_documents():
         with fitz.open(PACKET_DIR / doc["file"]) as pdf:
-            for i, page in enumerate(pdf, start=1):
-                text = page.get_text()
+            for i in range(1, pdf.page_count + 1):
+                text = cast(str, pdf[i - 1].get_text("text"))
                 low = text.lower()
                 score = sum(low.count(w) for w in words)
                 if score:

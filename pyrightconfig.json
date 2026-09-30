@@ -1,0 +1,9 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.14",
+  "include": ["shared", "labs", "data", "tools", "pytest", "setup_check.py", "score.py"],
+  "exclude": [".venv", "out", "**/__pycache__"],
+  "extraPaths": ["."],
+  "typeCheckingMode": "basic"
+}

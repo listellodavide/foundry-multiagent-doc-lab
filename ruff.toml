@@ -1,0 +1,12 @@
+target-version = "py314"
+line-length = 120
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "RUF100"]
+
+[lint.per-file-ignores]
+# Starter TODO blocks intentionally remove assignments and uses of imports.
+"labs/*/start/*.py" = ["F401", "F821", "F841"]
+
+[lint.isort]
+known-first-party = ["shared", "score"]

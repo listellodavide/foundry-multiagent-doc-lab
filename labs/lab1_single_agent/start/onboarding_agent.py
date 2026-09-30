@@ -14,14 +14,14 @@ from typing import Annotated
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from agent_framework import Agent, tool  # noqa: E402
-from pydantic import Field  # noqa: E402
+from agent_framework import Agent, tool
+from pydantic import Field
 
-from shared import pdf  # noqa: E402
-from shared.clients import chat_client, response_value, save_run, timed  # noqa: E402
-from shared.config import ONBOARDING_DATE  # noqa: E402
-from shared.policy import policy_text  # noqa: E402
-from shared.schema import DecisionRecord  # noqa: E402
+from shared import pdf
+from shared.clients import chat_client, response_value, save_run, timed
+from shared.config import ONBOARDING_DATE
+from shared.policy import policy_text
+from shared.schema import DecisionRecord
 
 
 # Three tools. Each does one thing, returns text, and cannot leave the packet folder.

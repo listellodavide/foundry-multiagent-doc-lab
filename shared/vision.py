@@ -29,4 +29,6 @@ def extract_profile_from_scan(file: str = "06_company_profile_scan.pdf", page: i
             ]}],
             text_format=VendorProfile,
         )
+    if response.output_parsed is None:
+        raise ValueError("Vision returned no structured profile; check for a refusal or incomplete response.")
     return response.output_parsed

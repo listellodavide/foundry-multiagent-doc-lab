@@ -1,7 +1,10 @@
-# Microsoft Foundry Multi-Agent 2-Day Workshop - vendor onboarding lab
+# Microsoft Foundry Multi-Agent 2-Day Workshop - October 2026 vendor onboarding lab
 # Versions match the Microsoft Learn mslearn-ai-agents solutions (checked September 2026).
-# Python 3.12 or 3.13 (PyRIT, used by azure-ai-evaluation, does not support 3.14 yet).
-agent-framework==1.12.1
+# Install only the framework integrations used by this workshop.
+agent-framework-core==1.12.1
+agent-framework-foundry==1.10.3
+agent-framework-orchestrations==1.0.0
+agent-framework-openai==1.11.0
 azure-ai-projects==2.3.0
 azure-identity>=1.25.3
 # openai 3.x replaced httpx with httpx2, which breaks azure-ai-projects: pinned like the Learn labs.
@@ -9,8 +12,9 @@ openai<3
 azure-ai-evaluation==1.18.3
 azure-monitor-opentelemetry
 opentelemetry-sdk
-fastmcp
-mcp
+# Agent Framework 1.12 uses the MCP 1.x API (McpError and camelCase fields).
+fastmcp==3.4.7
+mcp==1.30.0
 pymupdf
 pydantic>=2,<3
 python-dotenv

@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
@@ -24,8 +25,15 @@ ONBOARDING_DATE = "2026-11-02"
 
 
 def require_endpoint() -> None:
-    if not PROJECT_ENDPOINT:
+    if not PROJECT_ENDPOINT or "<" in PROJECT_ENDPOINT:
         raise SystemExit("PROJECT_ENDPOINT is missing: copy .env.example to .env and fill it in.")
+    endpoint = urlparse(PROJECT_ENDPOINT)
+    if (endpoint.scheme != "https" or not endpoint.netloc
+            or not endpoint.path.startswith("/api/projects/")
+            or not endpoint.path.removeprefix("/api/projects/").strip("/")):
+        raise SystemExit("PROJECT_ENDPOINT must be https://<resource>.services.ai.azure.com/api/projects/<project>")
+    if not MODEL.strip():
+        raise SystemExit("MODEL_DEPLOYMENT_NAME is missing in .env.")
 
 
 def evaluator_endpoint() -> str:

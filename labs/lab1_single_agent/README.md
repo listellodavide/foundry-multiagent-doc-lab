@@ -1,5 +1,8 @@
 # Lab 1: One agent, local tools
 
+October 2026 workshop.
+
+
 **Goal:** produce the onboarding decision with the simplest agent that could work.
 **Technique:** one Agent Framework agent, three function tools that parse PDFs locally with
 PyMuPDF, and `DecisionRecord` as structured output.

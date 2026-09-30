@@ -14,12 +14,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from azure.ai.evaluation import AzureOpenAIModelConfiguration, GroundednessEvaluator  # noqa: E402
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, GroundednessEvaluator
 
-from score import load  # noqa: E402
-from shared import config  # noqa: E402
-from shared.pdf import source_text  # noqa: E402
-from shared.policy import RULES  # noqa: E402
+from score import load
+from shared import config
+from shared.pdf import source_text
+from shared.policy import RULES
 
 
 def cheap_check(evidence: str, source: str) -> bool:
@@ -37,7 +37,7 @@ def main(path: str) -> None:
     suspects = 0
     for f in record.findings:
         context = source_text(f.source)
-        if not context or f.status == "unknown":
+        if not context or "[no text layer on this page:" in context or f.status == "unknown":
             print(f"{f.rule_id:5} {f.status:8} {'-':8} {'-':6} {f.source or 'no source'}")
             continue
         # TODO 2: run both checks and count findings that fail both

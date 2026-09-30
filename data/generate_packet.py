@@ -1,4 +1,4 @@
-"""Generates the onboarding packet and the policy PDF used by every lab.
+"""Generates the onboarding packet and policy for the October 2026 workshop.
 
 Run once from the repo root:  python data/generate_packet.py
 

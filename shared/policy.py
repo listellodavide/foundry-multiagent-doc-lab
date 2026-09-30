@@ -5,11 +5,12 @@ agents can read the policy as a document, while code can apply it deterministica
 """
 
 from datetime import date
+from typing import Literal
 
 from shared.config import ONBOARDING_DATE
 from shared.schema import DecisionRecord, Finding, KeyFacts, VendorProfile
 
-RULES = {
+RULES: dict[str, tuple[str, Literal["low", "medium", "high"], str]] = {
     "R1": ("Personal data breaches must be notified within 72 hours (DPA).", "high", "02_dpa.pdf"),
     "R2": ("The latest penetration test must be dated within 12 months before the onboarding date.", "medium", "03_security_questionnaire.pdf"),
     "R3": ("A SOC 2 Type II report must cover a period ending within 12 months before the onboarding date.", "medium", "03_security_questionnaire.pdf"),
@@ -31,9 +32,15 @@ def policy_text() -> str:
     return "\n".join(lines) + f"\nOnboarding date: {ONBOARDING_DATE}\nDecision: {DECISION_RULE}"
 
 
-def _months_between(earlier: str, later: str) -> float:
+def _within_previous_year(earlier: str | None, later: str) -> bool:
+    if earlier is None:
+        raise ValueError("Missing date")
     a, b = date.fromisoformat(earlier), date.fromisoformat(later)
-    return (b - a).days / 30.44
+    try:
+        lower = b.replace(year=b.year - 1)
+    except ValueError:  # Leap day: the preceding year's anniversary is February 28.
+        lower = b.replace(year=b.year - 1, day=28)
+    return lower <= a <= b
 
 
 def judge(facts: KeyFacts, vendor: VendorProfile) -> list[Finding]:
@@ -52,15 +59,17 @@ def judge(facts: KeyFacts, vendor: VendorProfile) -> list[Finding]:
             return None
 
     return [
-        f("R1", safe(lambda: facts.breach_notification_hours <= 72), f"{facts.breach_notification_hours} hours"),
-        f("R2", safe(lambda: _months_between(facts.pen_test_date, onboard) <= 12), f"pen test {facts.pen_test_date}"),
-        f("R3", safe(lambda: _months_between(facts.soc2_report_date, onboard) <= 12), f"SOC 2 period end {facts.soc2_report_date}"),
-        f("R4", safe(lambda: facts.insurance_cover_eur >= 1_000_000
+        f("R1", safe(lambda: None if facts.breach_notification_hours is None else facts.breach_notification_hours <= 72), f"{facts.breach_notification_hours} hours"),
+        f("R2", safe(lambda: _within_previous_year(facts.pen_test_date, onboard)), f"pen test {facts.pen_test_date}"),
+        f("R3", safe(lambda: _within_previous_year(facts.soc2_report_date, onboard)), f"SOC 2 period end {facts.soc2_report_date}"),
+        f("R4", safe(lambda: None if facts.insurance_cover_eur is None or facts.insurance_expiry is None
+                     else facts.insurance_cover_eur >= 1_000_000
                      and (date.fromisoformat(facts.insurance_expiry) - date.fromisoformat(onboard)).days >= 60),
           f"EUR {facts.insurance_cover_eur}, expires {facts.insurance_expiry}"),
-        f("R5", safe(lambda: facts.payment_terms_days >= 45), f"net {facts.payment_terms_days} days"),
-        f("R6", safe(lambda: facts.liability_cap_months >= 12), f"cap {facts.liability_cap_months} months of fees"),
-        f("R7", safe(lambda: abs(facts.invoice_subtotal + facts.invoice_vat - facts.invoice_total) < 0.01),
+        f("R5", safe(lambda: None if facts.payment_terms_days is None else facts.payment_terms_days >= 45), f"net {facts.payment_terms_days} days"),
+        f("R6", safe(lambda: None if facts.liability_cap_months is None else facts.liability_cap_months >= 12), f"cap {facts.liability_cap_months} months of fees"),
+        f("R7", safe(lambda: None if facts.invoice_subtotal is None or facts.invoice_vat is None or facts.invoice_total is None
+                     else abs(facts.invoice_subtotal + facts.invoice_vat - facts.invoice_total) < 0.01),
           f"{facts.invoice_subtotal} + {facts.invoice_vat} vs {facts.invoice_total}"),
         f("R8", None if not (facts.msa_signatory and vendor.signatory)
           else facts.msa_signatory.strip().lower() == vendor.signatory.strip().lower(),
@@ -68,7 +77,7 @@ def judge(facts: KeyFacts, vendor: VendorProfile) -> list[Finding]:
     ]
 
 
-def decide(findings: list[Finding]) -> str:
+def decide(findings: list[Finding]) -> Literal["approve", "conditional", "reject"]:
     high_fails = sum(1 for x in findings if x.status == "fail" and x.severity == "high")
     if all(x.status == "pass" for x in findings) and len(findings) == len(RULES):
         return "approve"

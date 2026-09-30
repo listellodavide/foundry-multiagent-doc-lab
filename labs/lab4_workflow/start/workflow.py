@@ -17,12 +17,13 @@ from typing import Never
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from agent_framework import (  # noqa: E402
+from agent_framework import (
     Agent,
     Case,
     Default,
     Executor,
     FileCheckpointStorage,
+    Workflow,
     WorkflowBuilder,
     WorkflowContext,
     WorkflowViz,
@@ -30,12 +31,12 @@ from agent_framework import (  # noqa: E402
     handler,
 )
 
-from shared import config, pdf  # noqa: E402
-from shared.messages import Packet, Partial  # noqa: E402
-from shared.clients import chat_client, response_value, save_run, timed  # noqa: E402
-from shared.policy import build_record  # noqa: E402
-from shared.schema import DecisionRecord, KeyFacts, VendorProfile  # noqa: E402
-from shared.vision import extract_profile_from_scan  # noqa: E402
+from shared import config, pdf
+from shared.clients import chat_client, response_value, save_run, timed
+from shared.messages import Packet, Partial
+from shared.policy import build_record
+from shared.schema import DecisionRecord, KeyFacts, VendorProfile
+from shared.vision import extract_profile_from_scan
 
 RULE_FIELDS = {
     "R1": ["breach_notification_hours"], "R2": ["pen_test_date"], "R3": ["soc2_report_date"],
@@ -108,7 +109,7 @@ async def finalize(record: DecisionRecord, ctx: WorkflowContext[Never, DecisionR
     await ctx.yield_output(record)
 
 
-def build_workflow():
+def build_workflow() -> Workflow:
     client = chat_client()
     contract = Specialist(fact_agent(client, "contract"), ["01_msa.pdf"],
                           ["payment_terms_days", "liability_cap_months", "msa_signatory"], id="contract")

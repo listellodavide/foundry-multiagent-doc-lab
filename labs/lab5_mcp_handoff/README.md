@@ -1,5 +1,8 @@
 # Lab 5: Handoff specialists, tools over MCP, a human in the loop
 
+October 2026 workshop.
+
+
 **Goal:** the same decision, reached in a conversation with the procurement officer.
 **Technique:** the PDF operations become an MCP server (`pdf_mcp_server.py`, FastMCP over stdio).
 A coordinator hands the conversation to contract, security and finance specialists
@@ -27,5 +30,5 @@ A coordinator hands the conversation to contract, security and finance specialis
 ## Stretch
 
 - Replace the writer's judgement with `shared.policy.build_record` and compare scores.
-- Returning 2025 participants: rebuild the coordinator and one specialist in LangGraph with the
+- Participants familiar with LangGraph: rebuild the coordinator and one specialist in LangGraph with the
   same MCP server (the handoff-tool pattern from the banking lab), and compare the amount of code.

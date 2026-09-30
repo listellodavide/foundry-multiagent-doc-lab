@@ -16,12 +16,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from agent_framework import Agent, MCPStdioTool  # noqa: E402
-from agent_framework.orchestrations import HandoffAgentUserRequest, HandoffBuilder  # noqa: E402
+from agent_framework import Agent, MCPStdioTool
+from agent_framework.openai import OpenAIChatOptions
+from agent_framework.orchestrations import HandoffAgentUserRequest, HandoffBuilder
 
-from shared.clients import chat_client, response_value, save_run, timed  # noqa: E402
-from shared.config import ONBOARDING_DATE  # noqa: E402
-from shared.schema import DecisionRecord  # noqa: E402
+from shared.clients import chat_client, response_value, save_run, timed
+from shared.config import ONBOARDING_DATE
+from shared.schema import DecisionRecord
 
 SERVER = Path(__file__).with_name("pdf_mcp_server.py")
 DONE = "REVIEW COMPLETE"
@@ -43,15 +44,18 @@ SPECIALIST_RULES = {
 def build_desk(client, pdf_tools):
     # >>> TODO 2: a coordinator and three specialists, all sharing the MCP tools
     # Handoff needs each agent to persist history per service call (Agent Framework 1.12+).
-    handoff_ready = {"require_per_service_call_history_persistence": True}
-    coordinator = Agent(client=client, name="coordinator", tools=pdf_tools, **handoff_ready,
+    coordinator = Agent(client=client, name="coordinator", tools=pdf_tools,
+                        default_options=OpenAIChatOptions(max_tokens=1024),
+                        require_per_service_call_history_persistence=True,
                         description="Talks to the procurement officer and routes work to specialists.",
                         instructions=(
                             "You coordinate a vendor onboarding review. Call read_policy first. Hand off to the "
                             "specialist who owns each rule. When all eight rules have a verdict, summarise the "
                             f"verdicts with sources and end your message with '{DONE}'."))
     specialists = [
-        Agent(client=client, name=name, tools=pdf_tools, **handoff_ready,
+        Agent(client=client, name=name, tools=pdf_tools,
+              default_options=OpenAIChatOptions(max_tokens=1024),
+              require_per_service_call_history_persistence=True,
               description=f"Checks {scope.split(':')[0]}",
               instructions=(f"You own {scope} Read the pages before answering, quote the evidence and cite "
                             "'file pN'. Say 'unknown' if the document does not answer it. Then hand back to "
@@ -113,7 +117,8 @@ async def main(auto: bool) -> None:
             # >>> TODO 4: a writer agent turns the conversation into the DecisionRecord (it may re-read pages)
             writer = Agent(client=client, name="writer", tools=pdf_tools, instructions=(
                 "Turn a vendor review conversation into a decision record. Re-read a page when the "
-                "conversation is unclear. Use null and 'unknown' for anything not established. Never guess."))
+                "conversation is unclear. Use null and 'unknown' for anything not established. Never guess."),
+                default_options=OpenAIChatOptions(max_tokens=4096))
             response = await writer.run("\n".join(transcript), options={"response_format": DecisionRecord})
             record = response_value(response, DecisionRecord)
             # <<< TODO 4

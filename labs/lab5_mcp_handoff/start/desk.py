@@ -16,12 +16,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from agent_framework import Agent, MCPStdioTool  # noqa: E402
-from agent_framework.orchestrations import HandoffAgentUserRequest, HandoffBuilder  # noqa: E402
+from agent_framework import Agent, MCPStdioTool
+from agent_framework.openai import OpenAIChatOptions
+from agent_framework.orchestrations import HandoffAgentUserRequest, HandoffBuilder
 
-from shared.clients import chat_client, response_value, save_run, timed  # noqa: E402
-from shared.config import ONBOARDING_DATE  # noqa: E402
-from shared.schema import DecisionRecord  # noqa: E402
+from shared.clients import chat_client, response_value, save_run, timed
+from shared.config import ONBOARDING_DATE
+from shared.schema import DecisionRecord
 
 SERVER = Path(__file__).with_name("pdf_mcp_server.py")
 DONE = "REVIEW COMPLETE"

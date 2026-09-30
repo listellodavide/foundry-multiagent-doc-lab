@@ -1,4 +1,4 @@
-# Microsoft Foundry Multi-Agent 2-Day Workshop: one vendor, six techniques
+# Microsoft Foundry Multi-Agent 2-Day Workshop — October 2026
 
 One business goal for the whole workshop: **decide whether Contoso Creative can onboard a new
 vendor, Carpathia Localization SRL, from its 6-PDF onboarding packet.** Every lab reaches that
@@ -32,19 +32,23 @@ R1, R2, R4 and R7 failing.
 
 ## Setup (once, about 10 minutes)
 
-Prerequisites: Python 3.12 or 3.13, Git, Azure CLI, VS Code. No Docker, no Node.js, no Azure
+Prerequisites: Python 3.14 (3.12 and 3.13 also accepted), Git, Azure CLI, Zed or VS Code. No Docker, no Node.js, no Azure
 Developer CLI. Azure: a Foundry project with one chat model deployment that supports vision and
 structured outputs (for example `gpt-4.1-mini`), and the **Foundry User** role on the project.
 
 ```bash
 git clone <this repo> && cd foundry-multiagent-doc-lab
-python -m venv .venv
+py -3.14 -m venv .venv             # Windows; macOS/Linux: python3.14 -m venv .venv
 source .venv/bin/activate          # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 cp .env.example .env               # then fill PROJECT_ENDPOINT and MODEL_DEPLOYMENT_NAME
 az login
 python setup_check.py              # or --offline before you have Azure access
 ```
+
+For tests and editor checks, install `requirements-dev.txt`. See
+[pytest/README.md](pytest/README.md) for the offline test suite and
+[workshop setup](docs/workshop-setup.md) for Windows, Zed, Azure, and troubleshooting.
 
 ## How each lab works
 
@@ -59,15 +63,17 @@ python score.py                    # leaderboard of every run in out/
 
 ## Cost
 
-Only model tokens and a small vector store in Lab 2 (deleted by the script). A full pass of all
+Model tokens, a small vector store and Code Interpreter usage in Lab 2 (the agent, store and
+uploaded files are deleted by the script). A full pass of all
 six labs is a few hundred thousand tokens per participant on a mini model. Lab 6 tracing writes
 to the Application Insights resource connected to the project.
 
-## Relation to the 2025 edition
+## October 2026 workshop
 
-This repository keeps the topics of the November 2025 workshop (tools, agentic RAG, planning,
-metacognition, multi-agent workflows, MCP, frameworks, memory, observability) and replaces its
-thirteen different scenarios with one goal. It uses the Agent Framework 1.x and Foundry Agent
-Service APIs that replaced `ChatAgent`, threads and runs; authentication is Entra ID only.
+The October 2026 workshop covers tools, agentic RAG, planning, metacognition, multi-agent
+workflows, MCP, frameworks, memory, and observability through one vendor onboarding scenario
+and six techniques. It uses Agent Framework 1.x and Foundry Agent Service with the Responses
+API; authentication is Entra ID only. The fictional vendor's onboarding date is November 2,
+2026, which is separate from the workshop date and anchors the policy checks and golden answer.
 
 Regenerate `start/` after editing a solution: `python tools/make_start.py`.

@@ -13,10 +13,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from fastmcp import FastMCP  # noqa: E402
+from fastmcp import FastMCP
 
-from shared import pdf  # noqa: E402
-from shared.policy import policy_text  # noqa: E402
+from shared import pdf
+from shared.policy import policy_text
 
 mcp = FastMCP(name="pdf-desk")
 

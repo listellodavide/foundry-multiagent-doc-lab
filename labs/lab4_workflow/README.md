@@ -1,5 +1,8 @@
 # Lab 4: A workflow graph
 
+October 2026 workshop.
+
+
 **Goal:** the same decision, with the order of work decided by a graph, not by a model.
 **Technique:** Agent Framework workflow. `intake` fans out to four executors in parallel
 (contract, security, finance specialists and a vision reader), `aggregator` fans in and applies the

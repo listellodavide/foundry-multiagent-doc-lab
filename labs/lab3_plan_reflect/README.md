@@ -1,5 +1,8 @@
 # Lab 3: Plan, extract, critique, judge in code
 
+October 2026 workshop.
+
+
 **Goal:** the same decision, with fewer confident mistakes.
 **Technique:** a planner maps each rule to fields and documents, an extractor fills `KeyFacts`,
 a critic checks every fact against its source and sends wrong ones back (at most two rounds), and

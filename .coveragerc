@@ -1,0 +1,14 @@
+[run]
+branch = True
+source = .
+
+[report]
+exclude_also =
+    if __name__ == ["']__main__["']:
+omit =
+    */start/*
+    */pytest/*
+    */.venv/*
+show_missing = True
+skip_covered = True
+fail_under = 90
