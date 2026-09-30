@@ -2,6 +2,9 @@
 
 October 2026 workshop.
 
+> **Advanced Python required.** You should be comfortable with async control flow, Pydantic models,
+> bounded loops and dependency injection for testing.
+
 
 **Goal:** the same decision, with fewer confident mistakes.
 **Technique:** a planner maps each rule to fields and documents, an extractor fills `KeyFacts`,
@@ -30,3 +33,10 @@ a critic checks every fact against its source and sends wrong ones back (at most
 
 - Set `MAX_ROUNDS = 0` and measure what the critic was worth on this packet.
 - Give the critic a different (larger) model deployment than the extractor.
+
+## ReAct comparison exercise
+
+Run `python labs/lab3_plan_reflect/start/react_loop.py`. Complete the typed
+Plan-Act-Observe loop, keep its actions on the allowlist, and compare its trace and score with the
+plan-first implementation. The trace stores a short operational rationale, not private model
+chain-of-thought, and stops after `MAX_STEPS` even when the model fails to finish.

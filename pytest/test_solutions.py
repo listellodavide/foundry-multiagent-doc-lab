@@ -192,9 +192,9 @@ def test_lab5_agents_keep_handoff_history(solution, monkeypatch):
     monkeypatch.setattr(lab, "Agent", factory)
     monkeypatch.setattr(lab, "HandoffBuilder", lambda **kwargs: builder)
     lab.build_desk(object(), object())
-    assert factory.call_count == 4
+    assert factory.call_count == 7
     assert all(call.kwargs["require_per_service_call_history_persistence"] for call in factory.call_args_list)
-    assert builder.add_handoff.call_count == 4
+    assert builder.add_handoff.call_count == 9
 
 
 def test_lab6_groundedness_numbers(solution):

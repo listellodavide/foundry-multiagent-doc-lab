@@ -33,15 +33,15 @@ async def check_mcp(server: Path) -> None:
                             args=[str(server)]) as tools:
         names = {tool.name for tool in tools.functions}
         expected = {"list_documents", "read_page", "search_packet", "read_policy",
-                    "check_invoice_math", "read_scanned_profile"}
+                    "check_invoice_math", "read_scanned_profile", "lookup_vendor_registry"}
         if not expected.issubset(names):
             raise AssertionError(f"Missing MCP tools: {expected - names}")
-    print("[OK] MCP subprocess startup and discovery of all six tools")
+    print("[OK] MCP subprocess startup and discovery of all seven tools")
 
 
 def main() -> None:
     paths = sorted(p for p in config.ROOT.rglob("*.py")
-                   if not any(part in {".venv", ".git", ".pytest-tmp", "__pycache__"}
+                   if not any(part in {".venv", ".venvs", ".git", ".pytest-tmp", "__pycache__"}
                               for part in p.parts))
     for path in paths:
         ast.parse(path.read_text(encoding="utf-8"), filename=str(path))

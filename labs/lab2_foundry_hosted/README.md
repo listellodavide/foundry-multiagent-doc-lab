@@ -2,6 +2,8 @@
 
 October 2026 workshop.
 
+**Python level: Intermediate.** This lab uses SDK clients, resource cleanup and persistent storage.
+
 
 **Goal:** the same decision, with the agent and its tools running in Foundry Agent Service.
 **Technique:** upload the packet to a vector store, give a prompt agent File Search and Code
@@ -32,3 +34,10 @@ API (`agent_reference`).
 
 - Remove the vision step. Does the hosted agent say `unknown` for R8, or guess?
 - Build the same agent in the Foundry portal playground with the same files and compare answers.
+
+## Memory extension
+
+Run Lab 2 once, then complete `start/memory_review.py`. It contrasts a bounded in-process
+conversation window with session-scoped long-term SQLite vector memory. Only an approved decision
+summary is persisted; credentials and full IBAN-like values are redacted before storage. Run two
+tenant/session combinations and prove that recall cannot cross either boundary.

@@ -3,7 +3,17 @@
   "venv": ".venv",
   "pythonVersion": "3.14",
   "include": ["shared", "labs", "data", "tools", "pytest", "setup_check.py", "score.py"],
-  "exclude": [".venv", "out", "**/__pycache__"],
+  "exclude": [
+    ".venv",
+    ".venvs",
+    "out",
+    "**/__pycache__",
+    "labs/*/start",
+    "labs/lab7_framework_comparison/solution/langgraph_review.py",
+    "labs/lab7_framework_comparison/solution/semantic_kernel_review.py",
+    "labs/lab7_framework_comparison/solution/autogen_review.py",
+    "labs/lab8_durable_functions/solution/function_app.py"
+  ],
   "extraPaths": ["."],
   "typeCheckingMode": "basic"
 }

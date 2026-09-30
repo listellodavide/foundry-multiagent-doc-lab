@@ -2,6 +2,8 @@
 
 October 2026 workshop.
 
+**Python level: Intermediate.** This lab uses async functions, decorators and typed model output.
+
 
 **Goal:** produce the onboarding decision with the simplest agent that could work.
 **Technique:** one Agent Framework agent, three function tools that parse PDFs locally with

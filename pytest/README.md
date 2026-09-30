@@ -53,7 +53,7 @@ Run the complete unit suite:
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The expected result is `126 passed`. Run the same suite with statement and branch coverage:
+The expected result is `165 passed`. Run the same suite with statement and branch coverage:
 
 ```powershell
 .\.venv\Scripts\coverage.exe erase

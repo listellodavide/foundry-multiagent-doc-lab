@@ -1,0 +1,3 @@
+-r requirements-extension-common.txt
+azure-functions
+azure-functions-durable==1.7.0

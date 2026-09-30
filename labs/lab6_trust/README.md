@@ -2,6 +2,8 @@
 
 October 2026 workshop.
 
+**Python level: Intermediate.** This lab uses evaluators, repeated runs and telemetry configuration.
+
 
 **Goal:** decide which technique you would put in front of procurement, with evidence.
 **Technique:** four measurements on the outputs of Labs 1 to 5.

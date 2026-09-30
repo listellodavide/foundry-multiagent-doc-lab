@@ -17,6 +17,7 @@ from fastmcp import FastMCP
 
 from shared import pdf
 from shared.policy import policy_text
+from shared.registry import lookup_vendor
 
 mcp = FastMCP(name="pdf-desk")
 
@@ -62,6 +63,13 @@ def read_scanned_profile(file: str = "06_company_profile_scan.pdf") -> str:
     """Read a scanned (image-only) page with a vision model and return the vendor profile as JSON."""
     from shared.vision import extract_profile_from_scan  # needs az login and the Foundry project
     return extract_profile_from_scan(file).model_dump_json()
+
+
+@mcp.tool()
+def lookup_vendor_registry(registration_number: str) -> str:
+    """Look up the allowlisted public fields of a vendor in the external registry."""
+    # TODO 2: call the authenticated registry client and return only its validated public model
+    raise NotImplementedError("TODO 2: see the lab README")
 
 
 if __name__ == "__main__":

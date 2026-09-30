@@ -1,0 +1,2 @@
+-r requirements-extension-common.txt
+langgraph==1.2.12

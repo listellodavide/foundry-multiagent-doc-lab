@@ -9,6 +9,12 @@ omit =
     */start/*
     */pytest/*
     */.venv/*
+    */.venvs/*
+    */lab7_framework_comparison/solution/langgraph_review.py
+    */lab7_framework_comparison/solution/semantic_kernel_review.py
+    */lab7_framework_comparison/solution/autogen_review.py
+    */lab8_durable_functions/solution/function_app.py
+    */lab8_durable_functions/solution/run_local.py
 show_missing = True
 skip_covered = True
 fail_under = 90

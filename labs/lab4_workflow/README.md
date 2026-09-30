@@ -2,6 +2,9 @@
 
 October 2026 workshop.
 
+> **Advanced Python required.** This lab uses concurrent graph execution, typed messages,
+> conditional routing and persistent checkpoints.
+
 
 **Goal:** the same decision, with the order of work decided by a graph, not by a model.
 **Technique:** Agent Framework workflow. `intake` fans out to four executors in parallel

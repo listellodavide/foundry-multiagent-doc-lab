@@ -1,79 +1,239 @@
-# Microsoft Foundry Multi-Agent 2-Day Workshop — October 2026
+# Microsoft Foundry Multi-Agent Systems Workshop
 
-One business goal for the whole workshop: **decide whether Contoso Creative can onboard a new
-vendor, Carpathia Localization SRL, from its 6-PDF onboarding packet.** Every lab reaches that
-same decision with a different agentic technique, writes the same `DecisionRecord`, and is scored
-by the same `score.py` against the same golden answer. The leaderboard at the end shows where each
-technique wins, where it fails, and what it costs.
+## Course assignment
 
-| Lab | Technique | Foundry / framework features | Time |
-| --- | --- | --- | --- |
-| 1 | Single agent + local PDF tools | Agent Framework `Agent`, `@tool`, structured output, `max_invocations` | 75 min |
-| 2 | Hosted agent: File Search + Code Interpreter + vision | Foundry Agent Service (`azure-ai-projects` 2.x), vector store, Responses API, image input | 90 min |
-| 3 | Planner + extractor + critic, policy in code | Structured plans, reflection loop, deterministic judge | 90 min |
-| 4 | Workflow graph: fan-out, fan-in, switch-case | `WorkflowBuilder`, executors, checkpoints, `WorkflowViz` | 90 min |
-| 5 | Handoff specialists over MCP, with a human | FastMCP server, `MCPStdioTool`, `HandoffBuilder`, human-in-the-loop | 90 min |
-| 6 | Trust: leaderboard, groundedness, variance, tracing | `azure-ai-evaluation`, OpenTelemetry to Application Insights | 75 min |
+This repository contains the practical assignment for a three-day workshop on agent-based
+application development with Microsoft Foundry. The workshop takes place in October 2026 and uses
+Python 3.14.
 
-## The packet (generated, fictional)
+You will implement several solutions to the same document-review problem. Each solution must
+produce the same typed output, allowing you to compare correctness, runtime, reliability and
+operational complexity across agent patterns and frameworks.
 
-| File | What it contains | What it tests |
-| --- | --- | --- |
-| `01_msa.pdf` | Master services agreement, 2 pages, signatures | Payment terms, liability cap, signatory |
-| `02_dpa.pdf` | Data processing addendum | Breach notice (96 h) next to a 72 h decoy |
-| `03_security_questionnaire.pdf` | Vendor answers | Pen test date vs a newer vulnerability scan decoy |
-| `04_insurance_certificate.pdf` | Insurance certificate | Cyber cover vs a smaller indemnity decoy, expiry |
-| `05_invoice.pdf` | Setup invoice | Total that does not add up |
-| `06_company_profile_scan.pdf` | Scanned image, no text layer | Needs vision: authorised signatory, register number |
+## Learning outcomes
 
-The policy (`data/policy/vendor_onboarding_policy.pdf`, and `shared/policy.py`) has eight rules,
-R1 to R8. The golden answer is `data/golden/decision_record.json`: decision **conditional**, with
-R1, R2, R4 and R7 failing.
+By the end of the workshop, you should be able to:
 
-## Setup (once, about 10 minutes)
+1. Explain when an agentic design is appropriate and when deterministic code is preferable.
+2. Build agents that call local functions, Foundry-hosted tools and MCP tools.
+3. Implement ReAct, reflection, supervisor, handoff, hierarchical and graph-based patterns.
+4. Distinguish short-term conversation context from persistent long-term memory.
+5. Add human approval, bounded execution and deterministic policy enforcement.
+6. Compare Agent Framework, LangGraph, Semantic Kernel and AutoGen using one problem and output contract.
+7. Implement replay-safe orchestration with Azure Durable Functions.
+8. Evaluate agent output for factual accuracy, groundedness, variance and operational risk.
 
-Prerequisites: Python 3.14 (3.12 and 3.13 also accepted), Git, Azure CLI, Zed or VS Code. No Docker, no Node.js, no Azure
-Developer CLI. Azure: a Foundry project with one chat model deployment that supports vision and
-structured outputs (for example `gpt-4.1-mini`), and the **Foundry User** role on the project.
+## Required Python background
 
-```bash
-git clone <this repo> && cd foundry-multiagent-doc-lab
-py -3.14 -m venv .venv             # Windows; macOS/Linux: python3.14 -m venv .venv
-source .venv/bin/activate          # Windows PowerShell: .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-cp .env.example .env               # then fill PROJECT_ENDPOINT and MODEL_DEPLOYMENT_NAME
+The workshop is intended for Python developers and cloud engineers.
+
+> **Advanced Python requirement:** Labs 3, 4, 5, 7 and 8 require confident use of `asyncio`, type
+> annotations, Pydantic models, decorators, context managers, dependency isolation and exception
+> handling. Students who do not yet have this background should complete the Easy and Intermediate
+> exercises first and use the supplied starter code during the Advanced labs.
+
+| Level | Expected knowledge |
+| --- | --- |
+| Easy | Run scripts, read functions, edit small TODO blocks and inspect JSON |
+| Intermediate | Use async calls, SDK clients, decorators, exceptions and typed models |
+| Advanced | Design concurrency, orchestration, state, security boundaries and recovery behavior |
+
+## Case study
+
+Contoso Creative is considering Carpathia Localization SRL as a new vendor. Your program must review
+a six-document onboarding packet and apply eight procurement rules, R1 through R8.
+
+The packet contains deliberate ambiguities:
+
+- similar deadlines with different legal meanings;
+- a penetration test and a newer vulnerability scan;
+- different insurance values;
+- an invoice with incorrect arithmetic;
+- a scanned company profile without a text layer.
+
+Every implementation must return the `DecisionRecord` defined in `shared/schema.py`. The reference
+decision is `conditional`; R1, R2, R4 and R7 fail. Do not copy the reference answer into a solution.
+Your implementation must derive its result from the supplied documents and policy.
+
+The fictional onboarding date is November 2, 2026. It is scenario input for date calculations and
+is separate from the October 2026 workshop date.
+
+## Lab programme
+
+| Day | Lab | Assignment | Python level | Time |
+| --- | --- | --- | --- | --- |
+| 1 | 0 | Identify agentic components and build a bounded hybrid review | Easy | 40 min |
+| 1 | 1 | Implement a single agent with local function tools | Intermediate | 75 min |
+| 1 | 2 | Create a hosted Foundry agent and add short- and long-term memory | Intermediate | 105 min |
+| 1 | 3 | Compare ReAct, plan-first execution and reflection | Advanced | 105 min |
+| 2 | 4 | Build a parallel workflow graph with routing and checkpoints | Advanced | 90 min |
+| 2 | 5 | Build hierarchical handoffs over secured MCP with human oversight | Advanced | 135 min |
+| 2 | 6 | Measure accuracy, groundedness, variance and traces | Intermediate | 75 min |
+| 3 | 7 | Implement and compare LangGraph, Semantic Kernel and AutoGen | Advanced | 195 min |
+| 3 | 8 | Implement a recoverable workflow with Azure Durable Functions | Advanced | 135 min |
+
+Each lab contains:
+
+- `README.md`: assignment instructions and review questions;
+- `start/`: incomplete student code containing numbered TODOs;
+- `solution/`: a complete reference implementation.
+
+Complete the files under `start/`. Use the reference solution only after attempting the exercise or
+when directed by the instructor.
+
+## Assessment and required evidence
+
+For each completed lab, submit or retain:
+
+1. the completed starter code;
+2. the generated JSON result under `out/`;
+3. the score reported by `score.py`;
+4. a short explanation of one failure mode and its mitigation;
+5. for Labs 4, 5, 7 and 8, a diagram or trace showing the orchestration path.
+
+Solutions are evaluated on:
+
+| Criterion | Weight |
+| --- | ---: |
+| Extracted facts | 40% |
+| Policy-rule verdicts | 50% |
+| Final decision | 10% |
+
+Automated score is necessary but not sufficient. A high-scoring implementation that leaks secrets,
+ignores missing evidence, loops without a bound, or cannot recover from failure does not satisfy the
+assignment.
+
+## Prerequisites
+
+Days 1 and 2 require:
+
+- Python 3.14;
+- Git;
+- Azure CLI;
+- Zed or Visual Studio Code;
+- a Microsoft Foundry project;
+- a chat-model deployment supporting image input and structured output;
+- Foundry access through Microsoft Entra ID.
+
+Day 3 also requires:
+
+- Azure Functions Core Tools v4;
+- Azurite;
+- disk space for four isolated environments under `.venvs/`.
+
+Docker and Node.js are not required when Core Tools and Azurite are installed through native
+packages or editor extensions.
+
+## Environment setup
+
+Run all commands from the repository root.
+
+### Windows PowerShell
+
+```powershell
+py -3.14 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+Copy-Item .env.example .env
 az login
-python setup_check.py              # or --offline before you have Azure access
+.\.venv\Scripts\python.exe setup_check.py
 ```
 
-For tests and editor checks, install `requirements-dev.txt`. See
-[pytest/README.md](pytest/README.md) for the offline test suite and
-[workshop setup](docs/workshop-setup.md) for Windows, Zed, Azure, and troubleshooting.
-
-## How each lab works
-
-Each lab folder has `README.md`, `start/` (code with `TODO n` markers that raise
-`NotImplementedError`) and `solution/`. Work in `start/`; compare with `solution/` when stuck.
-Run everything from the repo root. After each lab:
+### macOS or Linux
 
 ```bash
-python score.py out/lab1.json      # one run
-python score.py                    # leaderboard of every run in out/
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+cp .env.example .env
+az login
+.venv/bin/python setup_check.py
 ```
 
-## Cost
+Configure `.env` with your assigned project and deployment:
 
-Model tokens, a small vector store and Code Interpreter usage in Lab 2 (the agent, store and
-uploaded files are deleted by the script). A full pass of all
-six labs is a few hundred thousand tokens per participant on a mini model. Lab 6 tracing writes
-to the Application Insights resource connected to the project.
+```dotenv
+PROJECT_ENDPOINT=https://<resource>.services.ai.azure.com/api/projects/<project>
+MODEL_DEPLOYMENT_NAME=<deployment-name>
+AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
+ENABLE_SENSITIVE_DATA=false
+```
 
-## October 2026 workshop
+Authentication uses Entra ID. Do not place API keys, access tokens or connection strings in source
+files or commits.
 
-The October 2026 workshop covers tools, agentic RAG, planning, metacognition, multi-agent
-workflows, MCP, frameworks, memory, and observability through one vendor onboarding scenario
-and six techniques. It uses Agent Framework 1.x and Foundry Agent Service with the Responses
-API; authentication is Entra ID only. The fictional vendor's onboarding date is November 2,
-2026, which is separate from the workshop date and anchors the policy checks and golden answer.
+Prepare Day 3 separately:
 
-Regenerate `start/` after editing a solution: `python tools/make_start.py`.
+```powershell
+.\setup-extension-envs.bat
+.\.venv\Scripts\python.exe setup_extension_check.py --offline
+```
+
+```bash
+chmod +x setup-extension-envs.sh run-extension-tests.sh
+./setup-extension-envs.sh
+.venv/bin/python setup_extension_check.py --offline
+```
+
+Start Azurite and repeat the readiness check without `--offline` before Lab 8.
+
+## Running and scoring an exercise
+
+Example for Lab 1 on Windows:
+
+```powershell
+.\.venv\Scripts\python.exe labs\lab1_single_agent\start\onboarding_agent.py
+.\.venv\Scripts\python.exe score.py out\lab1.json
+```
+
+Display the leaderboard for all completed runs:
+
+```powershell
+.\.venv\Scripts\python.exe score.py
+```
+
+Equivalent macOS/Linux commands use `.venv/bin/python` and forward slashes.
+
+## Automated validation
+
+Windows:
+
+```powershell
+.\run-all-test.bat
+.\run-extension-tests.bat
+```
+
+macOS or Linux:
+
+```bash
+./run-all-test.sh
+./run-extension-tests.sh
+```
+
+The base suite runs offline. It generates an isolated packet, replaces live model clients with test
+doubles and does not consume Azure quota. Passing unit tests does not prove that live Azure
+authentication, quota or model behavior is correct; run the assigned solution scripts as well.
+
+## Repository structure
+
+| Path | Contents |
+| --- | --- |
+| `labs/` | Assignments, starter code and reference solutions |
+| `shared/` | Schemas, policy, memory, PDF, configuration and client utilities |
+| `data/` | Packet generator, generated PDFs, policy and reference answer |
+| `pytest/` | Offline automated tests |
+| `tools/` | Starter generation and offline verification |
+| `infra/durable/` | Optional Azure deployment for Lab 8 |
+| `out/` | Generated results, checkpoints and reports |
+
+## Resource use and cleanup
+
+Live exercises consume model tokens. Lab 2 also creates uploaded files, a vector store, an agent
+version and a Code Interpreter session. The reference solution deletes these resources after both
+successful and failed runs. Lab 6 may send traces to Application Insights. Lab 8 runs locally by
+default; Azure deployment is optional.
+
+Delete workshop resources when instructed by the instructor. Do not reuse shared workshop resources
+for production or confidential data.
+
+Additional setup, editor and quota guidance is available in
+[`docs/workshop-setup.md`](docs/workshop-setup.md). Detailed testing instructions are in
+[`pytest/README.md`](pytest/README.md).

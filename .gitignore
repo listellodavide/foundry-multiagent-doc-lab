@@ -1,5 +1,6 @@
 .env
 .venv/
+.venvs/
 __pycache__/
 .pytest_cache/
 .pytest-tmp/
@@ -8,5 +9,7 @@ __pycache__/
 htmlcov/
 out/*
 !out/.gitkeep
+*.sqlite3
+local.settings.json
 data/packet/
 data/policy/

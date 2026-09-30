@@ -38,11 +38,18 @@ SPECIALIST_RULES = {
     "security_specialist": ("R1 to R4: breach notice in 02_dpa.pdf, penetration test and SOC 2 in "
                             "03_security_questionnaire.pdf, cyber insurance in 04_insurance_certificate.pdf."),
     "finance_specialist": "R7: invoice arithmetic in 05_invoice.pdf. Always use check_invoice_math.",
+    "identity_specialist": ("R8: compare the MSA signatory in 01_msa.pdf with the authorised "
+                            "signatory returned by read_scanned_profile."),
+}
+
+SUPERVISOR_TEAMS = {
+    "compliance_supervisor": ["contract_specialist", "security_specialist"],
+    "operations_supervisor": ["finance_specialist", "identity_specialist"],
 }
 
 
 def build_desk(client, pdf_tools):
-    # >>> TODO 2: a coordinator and three specialists, all sharing the MCP tools
+    # >>> TODO 2: a coordinator, two supervisors and four specialists, all sharing the MCP tools
     # Handoff needs each agent to persist history per service call (Agent Framework 1.12+).
     coordinator = Agent(client=client, name="coordinator", tools=pdf_tools,
                         default_options=OpenAIChatOptions(max_tokens=1024),
@@ -52,29 +59,41 @@ def build_desk(client, pdf_tools):
                             "You coordinate a vendor onboarding review. Call read_policy first. Hand off to the "
                             "specialist who owns each rule. When all eight rules have a verdict, summarise the "
                             f"verdicts with sources and end your message with '{DONE}'."))
-    specialists = [
-        Agent(client=client, name=name, tools=pdf_tools,
-              default_options=OpenAIChatOptions(max_tokens=1024),
-              require_per_service_call_history_persistence=True,
-              description=f"Checks {scope.split(':')[0]}",
-              instructions=(f"You own {scope} Read the pages before answering, quote the evidence and cite "
-                            "'file pN'. Say 'unknown' if the document does not answer it. Then hand back to "
-                            "the coordinator."))
+    specialists = {
+        name: Agent(client=client, name=name, tools=pdf_tools,
+                    default_options=OpenAIChatOptions(max_tokens=1024),
+                    require_per_service_call_history_persistence=True,
+                    description=f"Checks {scope.split(':')[0]}",
+                    instructions=(f"You own {scope} Read the pages before answering, quote the evidence and cite "
+                                  "'file pN'. Say 'unknown' if the document does not answer it. Then hand back to "
+                                  "your supervisor."))
         for name, scope in SPECIALIST_RULES.items()
-    ]
+    }
+    supervisors = {
+        name: Agent(client=client, name=name, tools=pdf_tools,
+                    default_options=OpenAIChatOptions(max_tokens=1024),
+                    require_per_service_call_history_persistence=True,
+                    description=f"Supervises {', '.join(team)}",
+                    instructions=("Delegate each owned rule to the appropriate specialist, check that evidence "
+                                  "and sources are present, then return the consolidated verdicts to coordinator."))
+        for name, team in SUPERVISOR_TEAMS.items()
+    }
     # <<< TODO 2
 
-    # >>> TODO 3: handoff rules: coordinator <-> each specialist, and stop when the coordinator says DONE
-    return (
-        HandoffBuilder(name="onboarding_handoff", participants=[coordinator, *specialists],
-                       termination_condition=lambda conv: bool(conv) and DONE in (conv[-1].text or ""))
-        .with_start_agent(coordinator)
-        .add_handoff(coordinator, specialists)
-        .add_handoff(specialists[0], [coordinator])
-        .add_handoff(specialists[1], [coordinator])
-        .add_handoff(specialists[2], [coordinator])
-        .build()
-    )
+    # >>> TODO 3: wire a two-level hierarchy and stop when the coordinator says DONE
+    builder = HandoffBuilder(
+        name="onboarding_handoff",
+        participants=[coordinator, *supervisors.values(), *specialists.values()],
+        termination_condition=lambda conv: bool(conv) and DONE in (conv[-1].text or ""),
+    ).with_start_agent(coordinator)
+    builder.add_handoff(coordinator, list(supervisors.values()))
+    for supervisor_name, team in SUPERVISOR_TEAMS.items():
+        supervisor = supervisors[supervisor_name]
+        builder.add_handoff(supervisor, [specialists[name] for name in team])
+        builder.add_handoff(supervisor, [coordinator])
+        for name in team:
+            builder.add_handoff(specialists[name], [supervisor])
+    return builder.build()
     # <<< TODO 3
 
 

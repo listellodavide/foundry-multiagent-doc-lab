@@ -1,4 +1,4 @@
-# October 2026 workshop setup
+# October 2026 three-day workshop setup
 
 ## Python and Windows
 
@@ -100,3 +100,15 @@ guarantee the model's answer is correct: compare each output against the golden 
 
 The workshop takes place in October 2026. The fictional vendor starts on November 2, 2026;
 the packet's historical dates and policy reference date are scenario data, not workshop dates.
+
+## Extension-day environments and local orchestration
+
+Framework dependencies are isolated so their OpenAI, Pydantic and telemetry dependency trees do
+not destabilise the Agent Framework labs. Create all four Python 3.14 environments with
+`setup-extension-envs.bat` on Windows or `./setup-extension-envs.sh` on macOS/Linux. They are
+stored under the ignored `.venvs/` directory and validated by `run-extension-tests`.
+
+Install Azure Functions Core Tools v4 and Azurite before Lab 8. Start Azurite, copy the lab's
+`local.settings.example.json` to the ignored `local.settings.json`, and run `func start` from the
+chosen starter or solution directory. The optional Azure deployment uses managed identity and a
+Python 3.14-compatible plan; do not put storage keys or model credentials in source files.

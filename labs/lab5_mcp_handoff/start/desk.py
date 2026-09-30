@@ -38,14 +38,21 @@ SPECIALIST_RULES = {
     "security_specialist": ("R1 to R4: breach notice in 02_dpa.pdf, penetration test and SOC 2 in "
                             "03_security_questionnaire.pdf, cyber insurance in 04_insurance_certificate.pdf."),
     "finance_specialist": "R7: invoice arithmetic in 05_invoice.pdf. Always use check_invoice_math.",
+    "identity_specialist": ("R8: compare the MSA signatory in 01_msa.pdf with the authorised "
+                            "signatory returned by read_scanned_profile."),
+}
+
+SUPERVISOR_TEAMS = {
+    "compliance_supervisor": ["contract_specialist", "security_specialist"],
+    "operations_supervisor": ["finance_specialist", "identity_specialist"],
 }
 
 
 def build_desk(client, pdf_tools):
-    # TODO 2: a coordinator and three specialists, all sharing the MCP tools
+    # TODO 2: a coordinator, two supervisors and four specialists, all sharing the MCP tools
     raise NotImplementedError("TODO 2: see the lab README")
 
-    # TODO 3: handoff rules: coordinator <-> each specialist, and stop when the coordinator says DONE
+    # TODO 3: wire a two-level hierarchy and stop when the coordinator says DONE
     raise NotImplementedError("TODO 3: see the lab README")
 
 

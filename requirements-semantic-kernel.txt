@@ -1,0 +1,4 @@
+-r requirements-extension-common.txt
+semantic-kernel==1.44.1
+# 1.44.1 imports google.protobuf from its orchestration runtime but omits this dependency.
+protobuf>=5,<7
